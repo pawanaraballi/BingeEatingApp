@@ -1,0 +1,95 @@
+<html>
+<head>
+    <script type="text/javascript" language="javascript" src="jquery-1.8.2.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://use.fontawesome.com/0a0307d764.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="adv mad project">
+    <meta name="author" content="Sumeesh">
+
+    <title>Binge</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/dashboard.css" rel="stylesheet">
+
+    <script>
+        var data = <%-data%>;
+
+        var app = angular.module('myApp', []);
+        app.controller('userCtrl', function($scope) {
+
+            $scope.user = data;
+            $scope.sortName = 'username'; //default sort type - name
+            $scope.sortReserve = false; //default sort order
+            $scope.searchRecord = ""; //default search term
+
+            $scope.removeRow = function (username) {
+                var index = -1;
+                var comArr = eval($scope.user);
+                for (var i = 0; i < comArr.length; i++) {
+                    if (comArr[i].username === username) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index === -1) {
+                    alert("Something gone wrong");
+                }
+                $scope.user.splice(index, 1);
+            };
+        });
+    </script>
+
+</head>
+<body>
+<!--[if lt IE 8]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Noter</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <form class="navbar-form navbar-right" role="form">
+                <div class="form-group">
+                    <input type="text" placeholder="Email" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="Password" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-success">Sign in</button>
+            </form>
+        </div>
+        <!--/.navbar-collapse -->
+    </div>
+</nav>
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+    <div class="container">
+        <h4>When you click on 'Preview' It's not working :( </h4>
+
+        <form>
+            <textarea name="content" data-provide="markdown" rows="10"></textarea>
+            <label class="checkbox">
+                <input name="publish" type="checkbox"> Publish
+            </label>
+            <hr/>
+            <button type="submit" class="btn">Submit</button>
+        </form>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!-- Author
+    Name: Pawan Araballi -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+   <% include ../partials/head %>
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.2.2/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css">
+
+
+    <script type="text/javascript" src = "https://code.jquery.com/jquery-1.12.3.js"></script>
+    <script type="text/javascript" src = "https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src ="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src ="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
+
+
+
+
+    <script type="text/javascript">
+
+        var data = <%-data%>
+                console.log(data);
+        $(document).ready(function() {
+            $('#datatables').DataTable({
+                data: data,
+                columns: [
+                    {'data': 'username'},
+
+                    {
+                        'data': 'username', "render": function (data, type, full, meta) {
+                        return '<a href="report?id=' + data + '" >View Reports</a>';
+                    }
+                    },
+                    {
+                        'data': 'username', "render": function (data, type, full, meta) {
+                        return '<a href="progress?id=' + data + '" >Progress</a>';
+                    }
+                    },
+                    {
+                        'data': 'username', "render": function (data, type, full, meta) {
+                            return '<a href="appointments?id=' + data + '" >Appointments</a>';
+                        }
+                    }
+                ]
+            });
+        });
+
+    </script>
+
+</head>
+<style>
+    body {
+        font: 400 15px Lato, sans-serif;
+        line-height: 1.8;
+        color: #818181;
+    }
+    .navbar {
+        margin-bottom: 50px;
+        background-color: #006600;
+        border-radius: 0;
+    }
+    h2 {
+        font-size: 24px;
+        text-transform: uppercase;
+        color: #303030;
+        font-weight: 600;
+        margin-bottom: 30px;
+    }
+    h4 {
+        font-size: 19px;
+        line-height: 1.375em;
+        color: #303030;
+        font-weight: 400;
+        margin-bottom: 30px;
+    }
+    .jumbotron {
+        background-color: #f4420b;
+        color: #fff;
+        padding: 100px 25px;
+        font-family: Montserrat, sans-serif;
+    }
+</style>
+<body>
+<header>
+
+</header>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <h2 class="sub-header">The Patients Details</h2>
+        <div class="table-responsive ">
+            <table id="datatables" class="row-border hover display">
+                <thead>
+                <tr>
+                    <th>UserName</th>
+                    <th>Report</th>
+                    <th>Progress</th>
+                    <th>Appoinments</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<footer>
+
+</footer>
+
+</body>
+</html>

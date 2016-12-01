@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bootstrap Case</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<style>
+    .navbar {
+        margin-bottom: 0;
+        background-color: #006600;
+        z-index: 9999;
+        border: 0;
+        font-size: 12px !important;
+        line-height: 1.42857143 !important;
+        letter-spacing: 4px;
+        border-radius: 0;
+        font-family: Montserrat, sans-serif;
+    }
+    .navbar li a, .navbar .navbar-brand {
+        color: #fff !important;
+    }
+    .navbar-nav li a:hover, .navbar-nav li.active a {
+        color: #006600 !important;
+        background-color: #fff !important;
+    }
+    .navbar-default .navbar-toggle {
+        border-color: transparent;
+        color: #fff !important;
+    }
+    h2 {
+        font-size: 24px;
+        text-transform: uppercase;
+        color: #303030;
+        font-weight: 600;
+        margin-bottom: 30px;
+    }
+    h4 {
+        font-size: 19px;
+        line-height: 1.375em;
+        color: #303030;
+        font-weight: 400;
+        margin-bottom: 30px;
+    }
+    .jumbotron {
+        background-color: #006600;
+        color: #fff;
+        padding: 25px 25px;
+        font-family: Montserrat, sans-serif;
+    }
+</style>
+
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('aptCtrl', function($scope, $http) {
+        $http.get("patients.json").then(function (response) {
+            $scope.myData = response.data.appointments;
+
+        });
+    });
+</script>
+
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/untitled2/details.html">BINGE WebApp</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/untitled2/addUser.html">Create a Patient</a></li>
+                <li><a href="/untitled2/appointments.html">Appointments</a></li>
+                <li><a href="#">Notes</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="jumbotron text-center">
+    <h1>Appointment Form</h1>
+    <p>Enter the details and Submit</p>
+</div>
+
+<div class="container">
+
+</div>
+
+<div class="container">
+    <form action="/untitled2/appointment.html" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">User Name:</label>
+            <div class="col-sm-4">
+                <input class="form-control" id="emailid" type="text">
+            </div>
+            <label class="col-sm-4 control-label"></label>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Date:</label>
+            <div class="col-sm-4">
+                <input class="form-control" id="date" type="date" value="">
+            </div>
+            <label class="col-sm-4 control-label"></label>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Time:</label>
+            <div class="col-sm-4">
+                <input class="form-control" id="time" type="time" value="">
+            </div>
+            <label class="col-sm-4 control-label"></label>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-5"></div>
+            <div class="col-sm-2">
+                <button id="addappointment" class="btn btn-lg btn-primary btn-block" value="add appointment" type="submit">Add Appointment</button>
+            </div>
+            <div class="col-sm-5"></div>
+        </div>
+    </form>
+
+</div>
+
+</body>
+</html>
+

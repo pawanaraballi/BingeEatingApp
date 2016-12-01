@@ -1,0 +1,8 @@
+{
+  "user": [
+    {"username" : "Sophie", "supporter": "29", "notification": "Enabled"},
+    {"username" : "Eva", "supporter": "29", "notification": "Disabled"},
+    {"username" : "Joe", "supporter": "29", "notification": "Enabled"},
+    {"username" : "Emma", "supporter": "29", "notification": "Enabled"},
+  ]
+}

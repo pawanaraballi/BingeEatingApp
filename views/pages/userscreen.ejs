@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Appointment Page</title>
+    <script type="text/javascript" language="javascript" src="jquery-1.8.2.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript" src="http://code.highcharts.com/highcharts-3d.js"></script>
+</head>
+
+<script>
+    var dData = <%-data.DailyLog%>;
+    var wData = <%-data.WeeklyLog%>;
+    var i = 0;
+    var bingeData = [12];
+    var gdData = [12];
+    for(var j = 0; j<12; j++) {
+        bingeData[j] = null;
+        gdData[j] = null;
+    };
+    var dailyApp = angular.module("dailyApp", []);
+    dailyApp.directive('hcPieChart', function () {
+        return {
+            restrict: 'E',
+            template: '<div></div>',
+            scope: {
+                title: '@',
+                data: '='
+            },
+            link: function (scope, element) {
+                Highcharts.chart(element[0], {
+                    chart: {
+                        type: 'pie',
+                        options3d: {
+                            enabled: true,
+                            alpha: 45
+                        }
+                    },
+                    title: {
+                        text: scope.title
+                    },
+                    plotOptions: {
+                        pie: {
+                            center: ['50%', '50%']
+                        }
+                    },
+                    series: [{
+                        innerSize: 100,
+                        depth: 50,
+                        name: 'Value',
+                        data: scope.data
+                    }]
+                });
+            }
+        };
+    });
+    dailyApp.controller('dailyCtrl', function ($scope) {
+        $scope.dailyData = dData;
+        $scope.pieData = [
+            ['Binges', 5],
+            ['Kiwi', 3],
+            ['Mixed nuts', 1],
+            ['Oranges', 6]
+        ];
+    });
+    var weeklyApp = angular.module("weeklyApp", []);
+    weeklyApp.controller('weeklyCtrl', function($scope) {
+        $scope.weeklyData = wData;
+        Highcharts.chart('container', {
+            title: {
+                text: 'Weekly Data Flow'
+            },
+            subtitle: {
+                text: 'Binges vs Good Days'
+            },
+            chart: {
+                type: 'areaspline'
+            },
+            xAxis: {
+                categories: ['week-1','week-2','week-3','week-4','week-5','week-6','week-7','week-8',
+                    'week-9','week-10','week-11','week-12']
+            },
+
+            series: [
+                {
+                    name: 'Good Days',
+                    //                    data: gdData
+                    data: [1,3,4,3,2,6,5,6,7,8,9,1]
+                },
+                {
+                    name: 'Binges',
+                    //                    data: bingeData
+                    data: [3,2,5,6,8,3,1,6,3,9,4,3]
+                }
+            ]
+        });
+    });
+</script>
+<script>var rootApp = angular.module('rootApp', ['dailyApp','weeklyApp'])</script>
+
+<style>
+    .navbar {
+        margin-bottom: 0;
+        background-color: #006600;
+        z-index: 9999;
+        border: 0;
+        font-size: 12px !important;
+        line-height: 1.42857143 !important;
+        letter-spacing: 4px;
+        border-radius: 0;
+        font-family: Montserrat, sans-serif;
+    }
+    .navbar li a, .navbar .navbar-brand {
+        color: #fff !important;
+    }
+    .navbar-nav li a:hover, .navbar-nav li.active a {
+        color: #006600 !important;
+        background-color: #fff !important;
+    }
+    .navbar-default .navbar-toggle {
+        border-color: transparent;
+        color: #fff !important;
+    }
+    h2 {
+        font-size: 24px;
+        text-transform: uppercase;
+        color: #303030;
+        font-weight: 600;
+        margin-bottom: 30px;
+    }
+    h4 {
+        font-size: 19px;
+        line-height: 1.375em;
+        color: #303030;
+        font-weight: 400;
+        margin-bottom: 30px;
+    }
+    .jumbotron {
+        background-color: #006600;
+        color: #fff;
+        padding: 25px 25px;
+        font-family: Montserrat, sans-serif;
+    }
+</style>
+
+<body ng-app = 'rootApp'>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/supporter/home">BINGE WebApp</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/add/user">Create a Patient</a></li>
+                <li><a href="/appointment">Appointments</a></li>
+                <li><a href="#">Notes</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="jumbotron text-center">
+    <h1>User Details</h1>
+    <p>Daily and Weekly Progress</p>
+</div>
+
+
+
+<div class="container">
+    <h2 class="text-center">User Progress</h2>
+
+
+
+    <div class="table-responsive" ng-app="weeklyApp" ng-controller="weeklyCtrl">
+        <h4>Weekly Log</h4>
+        <div class="container" id="container">place for chart</div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Week</th>
+                <th>Binges</th>
+                <th>V/L/D</th>
+                <th>Good Days</th>
+                <th>Weight</th>
+                <th>F/V</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="x in weeklyData">
+                <td>{{ x.Week }}</td>
+                <td>{{ x.Binges }}</a>
+                <td>{{ x.V/L/D }}</td>
+                <td>{{ x.GoodDays }}</td>
+                <td>{{ x.Weight }}</td>
+                <td>{{ x.F/V }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+        <h4>Daily Log</h4>
+        <div ng-app = "dailyApp" ng-controller = "dailyCtrl">
+            <div class="col-sm-4">
+                <hc-pie-chart data="pieData">Placeholder for pie chart</hc-pie-chart>
+            </div>
+            <div class="col-sm-4"></div>
+            <table class="table table-striped">
+            <thead>
+            <font size = "8">
+            <tr>
+                <th>Food and Drinks Consumed</th>
+                <th>No. of Serving of Veg</th>
+                <th>V/L</th>
+                <th>Feelings</th>
+                <th>Time</th>
+            </tr>
+            </font>
+            </thead>
+            <tbody class="text-sm-center">
+            <tr ng-repeat="x in dailyData">
+                <td>{{ x.FoodAndDrinksConsumed }}</td>
+                <td>{{ x.NumberOfServingsOfVegetables }}</td>
+                <td>{{ x.AnyVomitingOrLaxativeUse }}</td>
+                <td>{{ x.Feelings }}</td>
+                <td>{{ x.Time }}</td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <a href="/appointment?username={{ username }}" type="button" class="btn btn-primary">Schedule Appointment</a>
+            </div>
+            <div class="col-sm-4"></div>
+        </div>
+
+
+</div>
+
+</body>
+</html>
+

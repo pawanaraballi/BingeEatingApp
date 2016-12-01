@@ -1,0 +1,66 @@
+body {
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #eee;
+    background-image: url("../images/uncc_image.jpg");
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+
+h2 {
+    text-align: center;
+}
+
+.form-signin-admin {
+    float: right;
+    width: 330px;
+    padding: 15px;
+    padding-top: 50px;
+    margin: 0 auto;
+    margin-right: 50px;
+}
+.form-signin-supporter {
+    float: left;
+    width: 330px;
+    padding: 15px;
+    padding-top: 50px;
+    margin: 0 auto;
+    margin-left: 50px;
+}
+.form-signin-supporter .form-signin-heading,
+.form-signin-supporter .checkbox,
+.form-signin-admin .form-signin-heading,
+.form-signin-admin .checkbox {
+    margin-bottom: 10px;
+}
+.form-signin-supporter .checkbox,
+.form-signin-admin .checkbox {
+    font-weight: normal;
+}
+.form-signin-supporter .form-control,
+.form-signin-admin .form-control {
+    position: relative;
+    height: auto;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 16px;
+}
+.form-signin-supporter .form-control:focus,
+.form-signin-admin .form-control:focus {
+    z-index: 2;
+}
+.form-signin-supporter input[type="email"],
+.form-signin-admin input[type="email"] {
+    margin-bottom: 5px;
+
+}
+.form-signin-admin input[type="password"],
+.form-signin-supporter input[type="password"] {
+    margin-bottom: 10px;
+
+}

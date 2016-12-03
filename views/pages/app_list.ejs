@@ -60,12 +60,10 @@
 </style>
 
 <script>
-    var json = <%-data%>;
-    console.log("json = " + json);
+
+    var json = <%-data.supporter%>;
     json = JSON.parse(JSON.stringify(json).split('"username":').join('"title":'));
     json = JSON.parse(JSON.stringify(json).split('"Time":').join('"start":'));
-    console.log("title: " + json[0].username);
-    console.log("start: " + json[0].start);
 
     $(document).ready(function() {
 
@@ -75,7 +73,7 @@
                 center: 'title',
                 right: 'month,agendaWeek,agendaDay'
             },
-            defaultDate: moment(),
+            defaultDate: '2016-11-30',
             defaultView: 'agendaWeek',
             navLinks: true, // can click day/week names to navigate views
             selectable: true,
@@ -85,11 +83,14 @@
                 var eventData;
                 if (title) {
                     eventData = {
-                        title: title,
+                        title: '<%-data.user%>',
                         start: start,
                         end: end
                     };
-                    window.location = '/supporter/'
+                    var date = new Date(eventData.start)
+                    date.setHours(date.getHours() - 5);
+                    var stDate = date.toISOString();
+                    window.location = '/supporter/CreateAppointments?username=' + eventData.title + "&Time=" + stDate;
                     $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
                 }
                 $('#calendar').fullCalendar('unselect');
@@ -98,34 +99,17 @@
                 element.find(".fc-bg").css("pointer-events", "none");
                 element.append("<div id= 'btnDeleteEvent' class='fa fa-times' style='position: absolute; bottom:0px;right:0px'></div>");
                 element.find("#btnDeleteEvent").click(function () {
-                    alert(event.title);
-                    window.location = '/supporter/removeEvent?username=' + event.title;
-                    $('#calendar').fullCalendar('removeEvents', event._id);
+                    if(confirm("Deleting Appointment with " + event.title + "!!")) {
+                        var date = new Date(event.start)
+                        date.setHours(date.getHours() - 5);
+                        var stDate = date.toISOString();
+                        window.location = '/supporter/removeAppointment?Time=' + stDate;
+                        $('#calendar').fullCalendar('removeEvents', event._id);
+                    }
                 })
             },
-//            eventRender: function(event, element) {
-//                element.append( "<span class='closeon'>X</span>" );
-//                element.click(function() {
-//                    $('#calendar').fullCalendar('removeEvents',event._id);
-//                });
-//            },
-//                eventClick: function(calEvent, jsEvent, view) {
-//                    /**
-//                     * calEvent is the event object, so you can access it's properties
-//                     */
-//                    if(confirm("Really delete event " + calEvent.title + " ?")) {
-//                        // delete event in backend
-//                        jQuery.post(
-//                            "/supporter/deleteEvent"
-//                            , { "title": calEvent.title }
-//                        );
-//                        // delete in frontend
-//                        $('#calendar').fullCalendar('removeEvents', calEvent._id);
-//                    }
-//                },
             editable: true,
             eventLimit: true, // allow "more" link when too many events
-
             events: json
         });
 

@@ -199,7 +199,7 @@
                         <tr class="text-sm-center" ng-repeat="x in user | orderBy:sortType:sortReverse | filter:searchRecord">
                             <td><a ng-href="/supporter/progress?username={{ x.username}}">{{ x.username }}</a></td>
                             <td>{{ x.supporter }}</td>
-                            <td><a ng-href="/supporter/CreateAppointments?username={{ x.username}}">Schedule Appointment</a></td>
+                            <td><a ng-href="/supporter/appointments?username={{ x.username}}">Schedule Appointment</a></td>
                             <td>{{ x.notification }}</td>
                             <td>
                                 <input type="button" value="Remove" class="btn btn-primary"

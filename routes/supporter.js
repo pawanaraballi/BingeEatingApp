@@ -1,4 +1,3 @@
-
 var jwt = require('jsonwebtoken');
 var express = require('express');
 var bcrypt = require('bcrypt');
@@ -74,21 +73,30 @@ supporter.get('/progress', function (req, res,next) {
     });
 });
 
+
+
 supporter.get('/appointments', function (req, res,next) {
 
     verify_token.verify(req.session.token,function(err, decoded) {
 
         console.log(decoded);
         if(!err && decoded.tag == 'supporter'){
-            console.log('user = ' + decoded.user);
-            user = decoded.user;
-            mysql.getAppointmentForSupporter(user,function (model) {
+
+            supporter = decoded.user;
+            mysql.getAppointmentForSupporter(supporter,function (model) {
                 console.log(model);
                 var data = JSON.stringify(model);
-                console.log('data = ' + data);
-                res.render('pages/app_list',{data:data});
+                console.log(data);
+                user = null;
+                if(req.query.username) {
+                     user = req.query.username;
+                     console.log("user = " + user);
+                }
+                res.render('pages/app_list',{data : {user: user, supporter: data  }});
+
             });
-        }else{
+            }
+        else{
             console.log(err);
             user = null ;
             req.session.token = null ;
@@ -98,31 +106,28 @@ supporter.get('/appointments', function (req, res,next) {
     });
 });
 
-supporter.get('/removeEvent', function (req, res,next) {
-
-    verify_token.verify(req.session.token,function(err, decoded) {
-
-        console.log(decoded);
-        if(!err && decoded.tag == 'supporter'){
-            console.log('user = ' + decoded.user);
-            user = decoded.user;
-        }else{
-            console.log(err);
-            user = null ;
-            req.session.token = null ;
-            res.render('pages/logout',{statusCode:200 , message : 'invalid session please login'});
-
-        }
-    });
-});
 
 supporter.get('/CreateAppointments', function (req, res,next) {
 
     verify_token.verify(req.session.token,function(err, decoded) {
 
-        console.log(decoded);
         if(!err && decoded.tag == 'supporter'){
-            res.render('pages/app_list',{data : {user: req.query.username}});
+
+            supporter = decoded.user;
+            var data  = {
+                Time : req.query.Time,
+                supporter : supporter,
+                username : req.query.username
+            };
+
+            console.log(data);
+            mysql.putAppointment(data , function (model) {
+                if(model != null){
+                    res.redirect('/supporter/appointments');
+                }else{
+                    res.render('pages/app_list');
+                }
+            });
         }
         else{
             console.log(err);
@@ -134,25 +139,25 @@ supporter.get('/CreateAppointments', function (req, res,next) {
     });
 });
 
-supporter.post('/CreateAppointments', function (req, res,next) {
+supporter.get('/removeAppointment', function (req, res,next) {
 
     verify_token.verify(req.session.token,function(err, decoded) {
 
         if(!err && decoded.tag == 'supporter'){
-
+            console.log(req.query.Time);
             supporter = decoded.user;
+            console.log("time =" + req.query.Time);
             var data  = {
-                Time : req.body.date + " " + req.body.time,
-                supporter : supporter,
-                username : req.body.user
+                Time : req.query.Time,
+                supporter : supporter
             };
 
             console.log(data);
-            mysql.putAppointment(data , function (model) {
+            mysql.removeAppointment(data , function (model) {
                 if(model != null){
-                    res.redirect('/supporter/home');
+                    //res.redirect('/supporter/home');
                 }else{
-                    res.render('pages/appointments');
+                    res.render('pages/app_list');
                 }
             })
         }else{
@@ -164,6 +169,7 @@ supporter.post('/CreateAppointments', function (req, res,next) {
         }
     });
 });
+
 
 
 module.exports = supporter;

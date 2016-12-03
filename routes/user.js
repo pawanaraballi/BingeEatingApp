@@ -5,13 +5,12 @@ Author: Pawan Araballi
 */
 
 var express = require('express');
-console.log('questions.js');
 var questions = express.Router();
 var mysql = require('../models/mysql');
 var verify_token = require('../models/verify');
 
 questions.get('/DailyQuestions', function (req, res,next) {
-console.log('questions');
+console.log('DailyQuestions');
 
 
     verify_token.verify(req.query.token,function(err, decoded) {
@@ -32,7 +31,7 @@ console.log('questions');
 });
 
 questions.get('/WeeklyQuestions', function (req, res,next) {
-    console.log('questions');
+    console.log('WeeklyQuestions');
 
 
     verify_token.verify(req.query.token,function(err, decoded) {
@@ -41,6 +40,26 @@ questions.get('/WeeklyQuestions', function (req, res,next) {
             mysql.WeeklyQuestions( function(model) {
                 console.log(model);
                 res.json({statusCode: 200, message : "Weekly Questions", data: model});
+            });
+        }
+        else{
+            console.log(err);
+            res.json({statusCode: 200, message : " invalid user ", data: null});
+        }
+    });
+
+});
+
+questions.get('/Steps', function (req, res,next) {
+    console.log('Steps');
+
+
+    verify_token.verify(req.query.token,function(err, decoded) {
+
+        if(!err && decoded.tag == 'user') {
+            mysql.getSteps( function(model) {
+                console.log(model);
+                res.json({statusCode: 200, message : "Steps", data: model});
             });
         }
         else{

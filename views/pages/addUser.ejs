@@ -12,6 +12,7 @@
 </head>
 
 <script>
+    var data = <%-data%>
     var app = angular.module('myApp', []);
     app.controller('customersCtrl', function($scope, $http) {
         $http.get("supporters.json").then(function (response) {

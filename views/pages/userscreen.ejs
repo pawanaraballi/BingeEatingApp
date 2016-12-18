@@ -1,29 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Appointment Page</title>
+    <title>User Page</title>
     <script type="text/javascript" language="javascript" src="jquery-1.8.2.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href='seekbarstyle.css' rel='stylesheet' type='text/css'>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
     <script type="text/javascript" src="http://code.highcharts.com/highcharts-3d.js"></script>
+    <script src="https://use.fontawesome.com/0a0307d764.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.0/angular-sanitize.min.js"></script>
 </head>
 
 <script>
     var dData = <%-data.DailyLog%>;
     var wData = <%-data.WeeklyLog%>;
+    var uData = <%-data.UserDetails%>;
     var i = 0;
     var bingeData = [12];
     var gdData = [12];
+    var wtData = [12];
     for(var j = 0; j<12; j++) {
         bingeData[j] = null;
         gdData[j] = null;
-    };
+        wtData[j] = null;
+    }
+    console.log('bdata = ' + bingeData[0]);
+
     var dailyApp = angular.module("dailyApp", []);
+
+    var weeklyApp = angular.module("weeklyApp", []);
+
+    var PageApp = angular.module('angularPageApp', ['ngSanitize']);
+
     dailyApp.directive('hcPieChart', function () {
         return {
             restrict: 'E',
@@ -59,6 +72,7 @@
             }
         };
     });
+
     dailyApp.controller('dailyCtrl', function ($scope) {
         $scope.dailyData = dData;
         $scope.pieData = [
@@ -68,9 +82,15 @@
             ['Oranges', 6]
         ];
     });
-    var weeklyApp = angular.module("weeklyApp", []);
+
     weeklyApp.controller('weeklyCtrl', function($scope) {
         $scope.weeklyData = wData;
+        angular.forEach(wData,function(eachValue){
+            bingeData[eachValue.Week - 1] = eachValue.Binges;
+            gdData[eachValue.Week - 1] = eachValue.GoodDays;
+            wtData[eachValue.Week - 1] = eachValue.PhysicalActivity;
+        });
+        console.log("bingedata = " + bingeData[1])
         Highcharts.chart('container', {
             title: {
                 text: 'Weekly Data Flow'
@@ -89,21 +109,305 @@
             series: [
                 {
                     name: 'Good Days',
-                    //                    data: gdData
-                    data: [1,3,4,3,2,6,5,6,7,8,9,1]
+                    data: gdData
+//                    data: [1,3,4,3,2,6,5,6,7,8,9,1]
                 },
+//                {
+//                    name: 'Physical Activity',
+//                    data: wtData
+////                    data: [1,3,4,3,2,6,5,6,7,8,9,1]
+//                },
                 {
                     name: 'Binges',
-                    //                    data: bingeData
-                    data: [3,2,5,6,8,3,1,6,3,9,4,3]
+                    data: bingeData
+//                    data: [3,2,5,6,8,3,1,6,3,9,4,3]
                 }
             ]
         });
     });
+
+    PageApp.directive('appDirective', function() {
+        return {
+            restrict: 'E',
+            template: [
+                '<div class="content-container">',
+                '<div class="content">',
+
+                '<div class="content-circles flex">',
+                '<div class="item" ng-repeat="step in steps">',
+                '<div class="circle" ',
+                ' ng-class="{first: (step.id === 1), last: (step.id === steps.length), active: activeStep === step.id, complete: activeStep > step.id}"',
+                ' ng-click="goToStep(step.id)"',
+                '></div>',
+                '</div>',
+                '</div>',
+
+                '<div class="content-progress-bars flex">',
+                '<div class="progress-bar" ng-repeat="step in steps" ng-if="step.id < steps.length"',
+                ' ng-class="{complete: activeStep > step.id}"',
+                '></div>',
+                '</div>',
+
+                '<div class="step-labels flex">',
+                '<div class="item" ng-repeat="step in steps">',
+                '<label ng-class="{active: activeStep === step.id, complete: activeStep > step.id}">{{ step.text }}</label>',
+                '</div>',
+                '</div>',
+
+                '</div>',
+                '</div>',
+
+                '<div class="test-buttons flex-center">',
+                '<button class="prev" ng-click="goToPrevious()" ><i class="fa fa-arrow-left" aria-hidden="true"></i></button>',
+                '<button class="next" ng-click="goToNext()" ><i class="fa fa-arrow-right" aria-hidden="true"></i></button>',
+                '</div>',
+
+                '<div class="scope-output flex hide">',
+                '<section>',
+                '<div class="active-step">Active Step: {{ activeStep }}</div>',
+                '<pre>{{ steps | json }}</pre></section>',
+                '</div>',
+            ].join('')
+        };
+    });
+
+    PageApp.controller('angularPageAppCtrl', function($scope,$http) {
+
+        $scope.steps = [
+            { id: 1, text: 'Step 1' },
+            { id: 2, text: 'Step 2' },
+            { id: 3, text: 'Step 3' },
+            { id: 4, text: 'Step 4' },
+            { id: 5, text: 'Step 5' },
+            { id: 6, text: 'Step 6' },
+            { id: 7, text: 'Step 7' },
+            { id: 8, text: 'Step 8' }
+        ];
+        $scope.activeStep = uData.step;
+
+        $scope.goToStep = function(newStepId) {
+            $scope.activeStep = newStepId;
+            console.log('new active step: ' + $scope.activeStep);
+            $http.get('/supporter/updateStep', { params: {step: $scope.activeStep, username: uData.username} })
+                .then (function (response) {
+                    console.log("success");
+                });
+        };
+
+        $scope.goToPrevious = function() {
+            if ($scope.activeStep <= 1) return;
+            $scope.goToStep( $scope.activeStep - 1 );
+        };
+
+        $scope.goToNext = function() {
+            if ($scope.activeStep >= $scope.steps.length) return;
+            $scope.goToStep( $scope.activeStep + 1 );
+        };
+
+    });
+
 </script>
-<script>var rootApp = angular.module('rootApp', ['dailyApp','weeklyApp'])</script>
+<script>var rootApp = angular.module('rootApp', ['dailyApp','weeklyApp', 'angularPageApp'])</script>
 
 <style>
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
+    .box-shadow--6dp {
+        box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .14), 0 1px 18px 0 rgba(0, 0, 0, .12), 0 3px 5px -1px rgba(0, 0, 0, .2)
+    }
+
+    .hide {
+        display: none !important;
+    }
+
+    .flex {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: stretch;
+    }
+
+    .flex-center {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: stretch;
+    }
+
+    .content-container .content-circles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .content-container .content-circles .item {
+        position: relative;
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+    }
+    .content-container .content-circles .item:first-child {
+        justify-content: flex-start;
+        flex-grow: 0.5;
+    }
+    .content-container .content-circles .item:first-child > .circle {
+        margin-left: -0.5em;
+    }
+    .content-container .content-circles .item:last-child {
+        justify-content: flex-end;
+        flex-grow: 0.5;
+    }
+    .content-container .content-circles .item.active {
+        background-color: #F2EBE5;
+    }
+    .content-container .content-circles .item .circle {
+        position: absolute;
+        background-color: white;
+        width: 1.7em;
+        height: 1.7em;
+        border-radius: 50%;
+        top: -0.25em;
+        left: 45%;
+        -webkit-box-shadow: inset 0px 1px 5px 0px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: inset 0px 1px 5px 0px rgba(0, 0, 0, 0.75);
+        box-shadow: inset 0px 1px 5px 0px rgba(0, 0, 0, 0.75);
+        z-index: 10;
+        transition: all 0.2s linear;
+    }
+    .content-container .content-circles .item .circle.first {
+        left: 0;
+    }
+    .content-container .content-circles .item .circle.last {
+        left: auto;
+        right: -0.4em;
+    }
+    .content-container .content-circles .item .circle::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 1px solid rgba(242, 235, 229, 0.6);
+        border-radius: 50%;
+        top: auto;
+        bottom: -1px;
+        -webkit-clip-path: polygon(0 85%, 100% 85%, 100% 100%, 0 100%);
+        clip-path: polygon(0 85%, 100% 85%, 100% 100%, 0 100%);
+    }
+    .content-container .content-circles .item .circle.complete {
+        background-color: mediumseagreen;
+        box-shadow: none;
+    }
+    .content-container .content-circles .item .circle.active {
+        background-color: green;
+        -webkit-box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.75);
+        box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.75);
+    }
+    .content-container .content-progress-bars {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .content-container .content-progress-bars .progress-bar {
+        flex-grow: 1;
+        background-color: transparent;
+        transition: all 0.2s linear;
+    }
+    .content-container .content-progress-bars .progress-bar.complete {
+        background-color: palegreen;
+    }
+    .content-container .content {
+        position: relative;
+        height: 18px;
+        background-color: white;
+        -webkit-box-shadow: inset 0px 1px 5px 0px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: inset 0px 1px 5px 0px rgba(0, 0, 0, 0.75);
+        box-shadow: inset 0px 1px 5px 0px rgba(0, 0, 0, 0.75);
+    }
+    .content-container .content::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        top: auto;
+        -webkit-box-shadow: inset 0px 1px 15px 0px rgba(242, 235, 229, 0.6);
+        -moz-box-shadow: inset 0px 1px 15px 0px rgba(242, 235, 229, 0.6);
+        box-shadow: inset 0px 1px 15px 0px rgba(242, 235, 229, 0.6);
+    }
+    .content-container .content .item {
+        position: relative;
+        flex-grow: 1;
+        text-align: center;
+    }
+    .content-container .content .item:first-child {
+        text-align: left;
+        flex-grow: 0.5;
+    }
+    .content-container .content .item:last-child {
+        text-align: right;
+        flex-grow: 0.5;
+    }
+    .content-container .content .item label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        top: -2em;
+        color: black;
+    }
+
+    /*color of step1..7*/
+    .content-container .content .item label.active, .content-container .content .item label.complete {
+        color: mediumseagreen;
+    }
+
+    /*next and prev button position*/
+    .test-buttons {
+        margin: 2em;
+    }
+    .test-buttons button {
+        padding: 1em 2em;
+        margin: 1em;
+        border: none;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    }
+    .test-buttons button:hover {
+        background-color: #006600;
+        color: #F2EBE5;
+        font-weight: bold;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    .test-buttons button:focus {
+        outline: none;
+    }
+
+    .scope-output section:first-child {
+        border-right: 3px solid #3EADC1;
+        border-bottom: 3px solid #3EADC1;
+        border-top: 3px solid #3EADC1;
+    }
+    .scope-output section .active-step {
+        font-size: 0.9em;
+        padding: 0.5em;
+        border-bottom: 1px solid #3EADC1;
+        text-align: center;
+    }
+    .scope-output section pre {
+        margin: 0;
+        padding: 1em 2em;
+    }
     .navbar {
         margin-bottom: 0;
         background-color: #006600;
@@ -177,17 +481,16 @@
     <p>Daily and Weekly Progress</p>
 </div>
 
-
-
 <div class="container">
     <h2 class="text-center">User Progress</h2>
-
-
-
+    <p>&nbsp;</p>
+    <div class="container">
+        <app-directive ng-controller="angularPageAppCtrl"></app-directive>
+    </div>
     <div class="table-responsive" ng-app="weeklyApp" ng-controller="weeklyCtrl">
-        <h4>Weekly Log</h4>
+        <h4><strong>Weekly Log</strong></h4>
         <div class="container" id="container">place for chart</div>
-        <table class="table table-striped">
+        <table class="table table-bordered box-shadow--6dp">
             <thead>
             <tr>
                 <th>Week</th>
@@ -201,7 +504,7 @@
             <tbody>
             <tr ng-repeat="x in weeklyData">
                 <td>{{ x.Week }}</td>
-                <td>{{ x.Binges }}</a>
+                <td>{{ x.Binges }}</td>
                 <td>{{ x.V/L/D }}</td>
                 <td>{{ x.GoodDays }}</td>
                 <td>{{ x.Weight }}</td>
@@ -212,13 +515,13 @@
     </div>
 
 
-        <h4>Daily Log</h4>
+    <h4><strong>Daily Log</strong></h4>
         <div ng-app = "dailyApp" ng-controller = "dailyCtrl">
-            <div class="col-sm-4">
-                <hc-pie-chart data="pieData">Placeholder for pie chart</hc-pie-chart>
-            </div>
+            <!--<div class="col-sm-4">-->
+                <!--<hc-pie-chart data="pieData">Placeholder for pie chart</hc-pie-chart>-->
+            <!--</div>-->
             <div class="col-sm-4"></div>
-            <table class="table table-striped">
+            <table class="table table-bordered box-shadow--6dp">
             <thead>
             <font size = "8">
             <tr>
@@ -240,18 +543,24 @@
             </tr>
             </tbody>
         </table>
-        </div>
+
+            <p>&nbsp;</p>
+
         <div class="row">
-            <div class="col-sm-4"></div>
-            <div class="col-sm-4">
-                <a href="/appointment?username={{ username }}" type="button" class="btn btn-primary">Schedule Appointment</a>
+
+            <div class="col-sm-4 pull-left">
+                <a href="appointments?username={{ dailyData[0].username }}" type="button" class="btn btn-primary">Schedule Appointment</a>
             </div>
             <div class="col-sm-4"></div>
-        </div>
+            <div class="col-sm-4 text-right">
+                <a href="/supporter/Notes?username={{ dailyData[0].username }}" type="button" class="btn btn-primary">Notes</a>
+            </div>
 
 
 </div>
-
+    </div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 </body>
 </html>
 

@@ -14,7 +14,12 @@ admin.get('/home', function (req, res,next) {
             console.log(decoded.user);
             console.log(decoded.supporter);
             user = decoded.user;
-            res.render('pages/admin_dashboard');
+            mysql.getAllUsers(function (model) {
+                console.log(model);
+                var data = JSON.stringify(model);
+                res.render('pages/admin_dashboard',{data:data});
+            });
+
         }else{
             console.log(err);
             user = null ;

@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Bootstrap Case</title>
+    <title>Calendar</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css">
     <link rel="stylesheet" media="print" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.print.css">
     <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js'></script>
@@ -15,6 +17,24 @@
 </head>
 
 <style>
+    .modal {
+        text-align: center;
+        padding: 0!important;
+    }
+
+    .modal:before {
+        content: '';
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+        margin-right: -4px; /* Adjusts for spacing */
+    }
+
+    .modal-dialog {
+        display: inline-block;
+        text-align: left;
+        vertical-align: middle;
+    }
     .navbar {
         margin-bottom: 0;
         background-color: #006600;
@@ -62,11 +82,19 @@
 <script>
 
     var json = <%-data.supporter%>;
+    var userid, uname, ndate;
     json = JSON.parse(JSON.stringify(json).split('"username":').join('"title":'));
     json = JSON.parse(JSON.stringify(json).split('"Time":').join('"start":'));
 
     $(document).ready(function() {
-
+//        Pre-defining setting for the summernote notes
+        $('#summernote').summernote({
+            height: 250,                 // set editor height
+            minHeight: null,             // set minimum height of editor
+            maxHeight: null,             // set maximum height of editor
+            focus: true                 // set focus to editable area after initializing summernote
+        });
+//        Pre-defining setting for the Fullcalendar events
         $('#calendar').fullCalendar({
             header: {
                 left: 'prev,next today',
@@ -78,42 +106,100 @@
             navLinks: true, // can click day/week names to navigate views
             selectable: true,
             selectHelper: true,
+            defaultTimedEventDuration: '01:00:00', //default time is changed to 1 hour
+//            Selecting a slot in the calendar for a specific user
             select: function(start, end) {
                 var title = '<%-data.user%>';
+                var strt = start;
                 var eventData;
                 if (title) {
                     eventData = {
                         title: '<%-data.user%>',
                         start: start,
-                        end: end
+                        id: title + strt
                     };
                     var date = new Date(eventData.start)
                     date.setHours(date.getHours() - 5);
                     var stDate = date.toISOString();
-                    window.location = '/supporter/CreateAppointments?username=' + eventData.title + "&Time=" + stDate;
+                    window.location = '/supporter/CreateAppointments?username=' + eventData.title + "&Time=" + stDate + "&id=" +eventData.id;
                     $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
                 }
                 $('#calendar').fullCalendar('unselect');
             },
+//            Remove button for the calendar event is included here
             eventRender: function(event, element) {
+                var flag = 0;
                 element.find(".fc-bg").css("pointer-events", "none");
                 element.append("<div id= 'btnDeleteEvent' class='fa fa-times' style='position: absolute; bottom:0px;right:0px'></div>");
                 element.find("#btnDeleteEvent").click(function () {
-                    if(confirm("Deleting Appointment with " + event.title + "!!")) {
+                    flag = 1;
+                    if(confirm("Deleting Appointment with " + event.title + " !!")) {
                         var date = new Date(event.start)
                         date.setHours(date.getHours() - 5);
                         var stDate = date.toISOString();
+                        rEvent = '/supporter/removeAppointment?Time=' + stDate;
                         window.location = '/supporter/removeAppointment?Time=' + stDate;
                         $('#calendar').fullCalendar('removeEvents', event._id);
                     }
                 })
+//                clicking on a calendar event will open up a modal which let you add notes
+                element.click(function () {
+                    userid = event.id;
+                    uname = event.title
+                    var date = new Date(event.start)
+                    date.setHours(date.getHours() - 5);
+                    ndate = date.toISOString();
+                    if(flag == 0) {
+                        $('#modalTitle').html('<p>Note for <strong>' + event.title + '</strong></p>');
+                        $('#eventUrl').attr('href', event.url);
+                        $('#fullCalModal').modal();
+                    } else {
+                        flag = 0;
+                    }
+                })
             },
+//            Event drag and drop is supported here
+            eventDrop: function(event, delta, revertFunc) {
+
+
+                if (!confirm("Are you sure about this change?")) {
+                    revertFunc();
+                } else {
+                    console.log("entered --");
+                    var date = new Date(event.start)
+                    date.setHours(date.getHours() - 5);
+                    var stDate = date.toISOString();
+                    window.location = '/supporter/updateAppointment?id=' + event.id + "&Time=" + stDate;
+                }
+
+            },
+//            Event Resizing is not implemented for now
+            eventResize: function(event, delta, revertFunc) {
+
+                alert(event.title + " end is now " + event.end.format());
+
+                if (!confirm("Change the Time?")) {
+                    revertFunc();
+                }
+
+            },
+            eventDurationEditable: false,
             editable: true,
-            eventLimit: true, // allow "more" link when too many events
+            eventLimit: false, // allow "more" link when too many events
             events: json
         });
 
     });
+
+    function addNote() {
+        var markupStr = $('#summernote').summernote('code').replace(/<\/?[^>]+(>|$)/g, "");
+        console.log("mark--" + markupStr);
+        $('#summernote').summernote('reset');
+//        submitting the hidden form to send the note data to database
+        $("#id").val(userid);
+        $("#description").val(markupStr);
+        $("#form").submit();
+    }
 
 </script>
 
@@ -147,6 +233,30 @@
 </div>
 
 <div class="container" id='calendar'></div>
+
+<!--Modal for writing Notes-->
+<div id="fullCalModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #5cb85c">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+                <h4 id="modalTitle" class="modal-title" style="color: white"></h4>
+            </div>
+            <!--Summernote is a framework used here which let us use formatted Text-->
+            <div class="modal-body" id="summernote"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button onclick="addNote()" class="btn btn-success" data-dismiss="modal">Add Notes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Storing the Notes to the database, message send through post request-->
+<form style="display: hidden" action="/supporter/addNote" method="POST" id="form">
+    <input type="hidden" id="id" name="id" value=""/>
+    <input type="hidden" id="description" name="description" value=""/>
+</form>
 
 </body>
 </html>

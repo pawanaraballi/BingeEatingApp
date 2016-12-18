@@ -3,13 +3,16 @@
 <head>
     <script type="text/javascript" language="javascript" src="jquery-1.8.2.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="adv mad project">
+    <meta name="author" content="Sumeesh">
+    <script src="https://use.fontawesome.com/0a0307d764.js"></script>
 
-    <title>Binge</title>
+    <title>Admin Homepage</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/bootstrap.min.css" rel="stylesheet">
@@ -18,6 +21,8 @@
     <link href="/dashboard.css" rel="stylesheet">
 
     <script>
+
+        var data = <%-data%>;
 
         var app = angular.module('myApp', []);
         app.controller('userCtrl', function($scope) {
@@ -158,52 +163,127 @@
                 </div>
             </div>
             <div>
-                <h2>Patient Table</h2>
+                <h1 class="text-lg-center">Patient Table</h1>
 
                 <div class="table-responsive" ng-app="myApp" ng-controller="userCtrl">
 
                     <form>
                         <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-addon" id="sizing-addon3"><span class="fa fa-search"></span></span>
                                 <input type="text" class="form-control" placeholder="Search Record" ng-model="searchRecord">
                             </div>
                         </div>
                     </form>
 
-                    <table class="table table-striped">
+                    <!--Patient Table-->
+                    <table class="table table-bordered box-shadow--6dp">
                         <thead>
-                        <tr>
-                            <th>
-                                <a href="#" ng-click="sortType = 'username'; sortReverse = !sortReverse">
-                                    User Name
-                                    <span ng-show="sortType == 'username' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == 'username' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = 'supporter'; sortReverse = !sortReverse">
-                                    Supporter
-                                    <span ng-show="sortType == 'supporter' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == 'supporter' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>Appointment</th>
-                            <th>
-                                <a href="#" ng-click="sortType = 'notification'; sortReverse = !sortReverse">
-                                    Notification
-                                    <span ng-show="sortType == 'notification' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == 'notification' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
+                        <tr><strong>
+                                <th class="text-lg-center">
+                                    <a href="" ng-click="sortType = 'username'; sortReverse = !sortReverse">
+                                        USER NAME
+                                        <span ng-show="sortType == 'username' && !sortReverse" class="fa fa-caret-down"></span>
+                                        <span ng-show="sortType == 'username' && sortReverse" class="fa fa-caret-up"></span>
+                                    </a>
+                                </th>
+                                <th class="text-lg-center">
+                                    <a href="" ng-click="sortType = 'supporter'; sortReverse = !sortReverse">
+                                        SUPPORTER
+                                        <span ng-show="sortType == 'supporter' && !sortReverse" class="fa fa-caret-down"></span>
+                                        <span ng-show="sortType == 'supporter' && sortReverse" class="fa fa-caret-up"></span>
+                                    </a>
+                                </th>
+                                <th class="text-lg-center"><a href="">APPOINTMENT</a></th>
+                                <th class="text-lg-center">
+                                    <a href="" ng-click="sortType = 'notifications'; sortReverse = !sortReverse">
+                                        NOTIFICATION
+                                        <span ng-show="sortType == 'notifications' && !sortReverse" class="fa fa-caret-down"></span>
+                                        <span ng-show="sortType == 'notifications' && sortReverse" class="fa fa-caret-up"></span>
+                                    </a>
+                                </th>
+                                <th class="text-lg-center"><a href="">ACTION</a></th>
+                            </strong>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="x in myData | orderBy:sortType:sortReverse | filter:searchRecord">
-                            <td>{{ x.username }}</td>
+                        <tr class="text-sm-center" ng-repeat="x in user | orderBy:sortType:sortReverse | filter:searchRecord">
+                            <td><a ng-href="/supporter/progress?username={{ x.username}}">{{ x.username }}</a></td>
                             <td>{{ x.supporter }}</td>
-                            <td><a ng-href="/appointment?username={{ x.username}}">Schedule Appointment</a>
-                            <td>{{ x.notification }}</td>
+                            <td><a ng-href="/supporter/appointments?username={{ x.username}}">Schedule Appointment</a></td>
+                            <td><div ng-switch="x.notifications" style="color: black">
+                                    <div ng-switch-when="Enabled"><i class="fa fa-bell" aria-hidden="true"></i></div>
+                                    <div ng-switch-default><i class="fa fa-bell-o" aria-hidden="true"></i></div>
+                                </div>
+                            </td>
+                            <td>
+                                <input type="button" value="Remove" class="btn btn-primary"
+                                       ng-click="removeRow(x.username)"/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <div>
+                <h1 class="text-lg-center">Patient Table</h1>
+
+                <div class="table-responsive" ng-app="myApp" ng-controller="userCtrl">
+
+                    <form>
+                        <div class="form-group">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-addon" id="sizing-addon3"><span class="fa fa-search"></span></span>
+                                <input type="text" class="form-control" placeholder="Search Record" ng-model="searchRecord">
+                            </div>
+                        </div>
+                    </form>
+
+                    <!--Patient Table-->
+                    <table class="table table-bordered box-shadow--6dp">
+                        <thead>
+                        <tr><strong>
+                                <th class="text-lg-center">
+                                    <a href="" ng-click="sortType = 'username'; sortReverse = !sortReverse">
+                                        USER NAME
+                                        <span ng-show="sortType == 'username' && !sortReverse" class="fa fa-caret-down"></span>
+                                        <span ng-show="sortType == 'username' && sortReverse" class="fa fa-caret-up"></span>
+                                    </a>
+                                </th>
+                                <th class="text-lg-center">
+                                    <a href="" ng-click="sortType = 'supporter'; sortReverse = !sortReverse">
+                                        SUPPORTER
+                                        <span ng-show="sortType == 'supporter' && !sortReverse" class="fa fa-caret-down"></span>
+                                        <span ng-show="sortType == 'supporter' && sortReverse" class="fa fa-caret-up"></span>
+                                    </a>
+                                </th>
+                                <th class="text-lg-center">
+                                    <a href="" ng-click="sortType = 'notifications'; sortReverse = !sortReverse">
+                                        NOTIFICATION
+                                        <span ng-show="sortType == 'notifications' && !sortReverse" class="fa fa-caret-down"></span>
+                                        <span ng-show="sortType == 'notifications' && sortReverse" class="fa fa-caret-up"></span>
+                                    </a>
+                                </th>
+                                <th class="text-lg-center"><a href="">ACTION</a></th>
+                            </strong>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="text-sm-center" ng-repeat="x in user | orderBy:sortType:sortReverse | filter:searchRecord">
+                            <td><a ng-href="/supporter/progress?username={{ x.username}}">{{ x.username }}</a></td>
+                            <td>{{ x.supporter }}</td>
+                            <td><div ng-switch="x.notifications" style="color: black">
+                                    <div ng-switch-when="Enabled"><i class="fa fa-bell" aria-hidden="true"></i></div>
+                                    <div ng-switch-default><i class="fa fa-bell-o" aria-hidden="true"></i></div>
+                                </div>
+                            </td>
+                            <td>
+                                <input type="button" value="Remove" class="btn btn-primary"
+                                       ng-click="removeRow(x.username)"/>
+                            </td>
                         </tr>
                         </tbody>
                     </table>

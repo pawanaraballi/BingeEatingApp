@@ -98,20 +98,20 @@
 //                    $('#calendar').fullCalendar('removeEvents',event._id);
                 });
             },
-               eventClick: function(calEvent, jsEvent, view) {
-                   /**
-                    * calEvent is the event object, so you can access it's properties
-                    */
-                   if(confirm("Really delete event " + calEvent.title + " ?")) {
-                       // delete event in backend
-                       jQuery.post(
-                           "/vacation/deleteEvent"
-                           , { "id": calEvent.id }
-                       );
-                       // delete in frontend
-                       $('#calendar').fullCalendar('removeEvents', calEvent._id);
-                   }
-               },
+//                eventClick: function(calEvent, jsEvent, view) {
+//                    /**
+//                     * calEvent is the event object, so you can access it's properties
+//                     */
+//                    if(confirm("Really delete event " + calEvent.title + " ?")) {
+//                        // delete event in backend
+//                        jQuery.post(
+//                            "/vacation/deleteEvent"
+//                            , { "id": calEvent.id }
+//                        );
+//                        // delete in frontend
+//                        $('#calendar').fullCalendar('removeEvents', calEvent._id);
+//                    }
+//                },
             editable: true,
             eventLimit: true, // allow "more" link when too many events
             events: [

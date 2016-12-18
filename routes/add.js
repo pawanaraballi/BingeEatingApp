@@ -1,8 +1,4 @@
-/*
- ----------------------------------------------------------------
- Author: Pawan Araballi
- ----------------------------------------------------------------
- */
+
 
 var express = require('express');
 console.log('questions.js');
@@ -25,12 +21,17 @@ add.post('/admin', function (req, res,next) {
 add.get('/user', function (req, res,next) {
     verify_token.verify(req.session.token,function(err, decoded) {
 
-        if(!err && ( decoded.tag == 'admin' || decoded.tag == 'supporter')) {
+        if(!err && decoded.tag == 'supporter') {
             mysql.getAllSupporter(function(model){
                 var data = JSON.stringify(model);
                 res.render('pages/addUser',{data:data});
                     });
 
+        } else if (!err && ( decoded.tag == 'admin')) {
+            mysql.getAllSupporter(function(model){
+                var data = JSON.stringify(model);
+                res.render('pages/adminAddUser',{data:data});
+            });
         }
         else{
             console.log(err);
@@ -67,6 +68,8 @@ add.post('/supporter', function (req, res,next) {
     verify_token.verify(req.session.token,function(err, decoded) {
 
         if(!err  && decoded.tag == 'admin'){
+
+            console.log("enter func");
 
             mysql.getSupporter(req.body.email,function(model){
                 if(model ==  null){
@@ -110,13 +113,11 @@ add.post('/user', function (req, res,next) {
 
         if(!err &&( decoded.tag == 'admin' || decoded.tag == 'supporter')){
 
-            console.log(req.body);
+            console.log(req.body.username);
 
             mysql.getUser(req.body.username,function(model){
                 if(model ==  null){
-                    console.log("no data");
                     var data = req.body;
-                    console.log(data);
                     var login_details = {
                         username : data.username,
                         password : data.password,
@@ -130,6 +131,9 @@ add.post('/user', function (req, res,next) {
                     if(decoded.tag == 'supporter'){
                         data.supporter = decoded.user;
                     }
+                    // else {
+                    //     data.supporter = 'me';
+                    // }
                     mysql.putUser(data,function(user){
                         console.log(user);
                     });

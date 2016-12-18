@@ -1,90 +1,129 @@
-
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Sign Up</title>
-    <!--Style and Scripts-->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+    <title>Welcome to BingeApp!!</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.16.1/TweenMax.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://use.fontawesome.com/0a0307d764.js"></script>
 
+    <style>
+        * {
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        html {
+            background: black;
+        }
+
+        body {
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background: url(http://analytics.uncc.edu/sites/analytics.uncc.edu/files/media/graphics/54%20-%20Front%20Night%2001A%23.jpg) no-repeat center fixed;
+            background-size: cover;
+        }
+
+        a {
+            color: #BBB;
+        }
+
+        .content:before {
+            content: "";
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            z-index: -1;
+            display: block;
+            background-color: black;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            -webkit-filter: blur(2px);
+            -moz-filter: blur(2px);
+            -o-filter: blur(2px);
+            -ms-filter: blur(2px);
+            filter: blur(2px);
+        }
+
+        .content {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 350px;
+            height: 350px;
+            background-color: rgba(10, 10, 10, 0.5);
+            margin: auto auto;
+            padding: 40px;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+            -moz-box-shadow: 0 0 10px black;
+            -webkit-box-shadow: 0 0 10px black;
+            box-shadow: 0 0 10px black;
+        }
+        .content .title {
+            text-align: center;
+            font-size: 2.0rem;
+            font-weight: 600;
+            padding-bottom: 30px;
+        }
+        .content input {
+            width: 100%;
+            font-size: 1.2rem;
+            font-family: "Open Sans";
+            margin: 0px 0px;
+            border: none;
+            padding: 15px;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+        }
+        .content span {
+            font-size: 1.5rem;
+        }
+        .content button {
+            width: 100%;
+            font-size: 1.1rem;
+            padding: 10px;
+            margin: 20px 0px;
+            background-color: #66A756;
+            color: White;
+            border: none;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+        }
+        .content .sub {
+            text-align: center;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
-<style>
-    html {
-
-    }
-    body {
-        padding-top: 40px;
-        padding-bottom: 40px;
-        background: url(http://analytics.uncc.edu/sites/analytics.uncc.edu/files/media/graphics/54%20-%20Front%20Night%2001A%23.jpg) no-repeat center fixed;
-        background-size: cover;
-    }
-
-    .form-signin {
-        max-width: 350px;
-        padding: 20px;
-        margin: 0 auto;
-    }
-    .form-signin .form-signin-heading,
-    .form-signin .checkbox {
-        margin-bottom: 20px;
-    }
-    .form-signin .checkbox {
-        font-weight: normal;
-    }
-    .form-signin .form-control {
-        position: relative;
-        height: auto;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        padding: 15px;
-        font-size: 20px;
-    }
-    .form-signin .form-control:focus {
-        z-index: 2;
-    }
-    .form-signin input[type="email"] {
-        margin-bottom: -1px;
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-    }
-    .form-signin input[type="password"] {
-        margin-bottom: 15px;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-    }
-
-</style>
 <body>
-
-<div class="container">
-
-    <form action="/login" method="get" class="form-signin-admin">
-        <div class="col-sm-4"></div>
-        <div class="col-sm-4">
-        <h1 class="form-signin-heading text-center">Login here!</h1>
-        <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" name="username" required autofocus>
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="password" required>
-        <% if( typeof error !== 'undefined' ){
-        %>
-        <p><%= error%></p>
-        <%
-        }%>
-        <div class="checkbox">
-            <label>
-                <input type="checkbox" value="remember-me"> Remember me
-            </label>
+<div class="content">
+    <form action="/login" method="get">
+        <div class="title" style="color: white; font-size: 28px">Login Here!</div>
+        <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon" style="background-color: transparent; color: #66A756;"><i class="fa fa-envelope-o fa-fw"></i></span>
+            <input type="email" id="inputEmail" class="form-control" name="username" required style="font-size: 18px" placeholder="E-mail"/>
+        </div>&nbsp;
+        <div class="input-group">
+            <span class="input-group-addon" style="background-color: transparent; color: #66A756;"><i class="fa fa-key fa-fw"></i></span>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="password" required style="font-size: 18px"/>
         </div>
-        <button id="login" class="btn btn-lg btn-primary btn-block" value="login user" type="submit">Sign in</button>
-        </div>
-        <div class="col-sm-4"></div>
+        <div class="sub"><button id="login" class="btn btn-lg btn-primary btn-block" value="login user" type="submit"><span style="font-size: 20px">Sign in</span></button></div>
     </form>
 
 </div>
-
-
-
 </body>
 </html>

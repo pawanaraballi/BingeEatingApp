@@ -30,9 +30,7 @@ var WeeklySummarySheet = bookshelf.Model.extend({
     tableName: 'WeeklySummarySheet'
 });
 var Steps = bookshelf.Model.extend({
-
     tableName: 'CheckList'
-
 });
 
 var Admin = bookshelf.Model.extend({
@@ -50,6 +48,14 @@ var Login = bookshelf.Model.extend({
 var Appointment = bookshelf.Model.extend({
     tableName: 'appointment'
 });
+var Images = bookshelf.Model.extend({
+    tableName: 'Images'
+});
+
+var Notes = bookshelf.Model.extend({
+    tableName: 'Notes'
+});
+
 
 module.exports.DailyQuestions = function(callback) {
     new DailyQuestion()
@@ -83,6 +89,16 @@ module.exports.getAdmin = function(user,callback) {
         .then(callback);
 }
 
+module.exports.putImageData = function(data,callback) {
+    new Images(data).save().then(callback);
+}
+
+// module.exports.updateImageData = function(image,data,callback) {
+//     new Images().where({image : image}).save({responses: data}, {patch: true}).then(callback);
+// }
+
+
+
 module.exports.getSupporter = function(user,callback) {
     new Supporter({email: user })
         .fetch()
@@ -105,6 +121,21 @@ module.exports.putSupporter = function(user,callback) {
 
 }
 
+module.exports.getAllUsers = function(callback) {
+    new User()
+        .fetchAll()
+        .then(callback);
+}
+
+// remove supporter for user
+module.exports.removeUser = function(user, callback) {
+    new User().where({username: user}).save({supporter: null}, {patch: true}).then(callback);
+}
+
+module.exports.updateStep = function(user,step, callback) {
+    new User().where({username: user}).save({step: step}, {patch: true}).then(callback);
+}
+
 module.exports.getUserForSupporter = function(user,callback) {
     new User().where({supporter : user}).fetchAll().then(callback);
 }
@@ -114,12 +145,19 @@ module.exports.putUser = function(user,callback) {
         .then(callback);
 }
 
+module.exports.updateUser = function(data,callback) {
+    new User().where({username : data.username}).save({noteData : data.noteData}, {patch : true})
+        .then(callback);
+}
+
 module.exports.putUserDailyLog = function(data,callback){
     new DailyLog(data).save().then(callback);
 }
+
 module.exports.putUserDailyActivities = function(data,callback){
     new DailyPhysicalActivity(data).save().then(callback);
 }
+
 module.exports.putUserWeeklyLog = function(data,callback){
     new WeeklySummarySheet(data).save().then(callback);
 }
@@ -135,10 +173,20 @@ module.exports.getUserWeeklyLog = function(user,callback){
 }
 
 module.exports.putAppointment = function(data,callback){
-    new Appointment(data).save().then(callback);
+    new Appointment(data).save(null, {method: 'insert'}).then(callback);
 }
+
+module.exports.updateAppointment = function(data,callback){
+    new Appointment().where({id: data.id}).save({Time: data.Time}, {patch: true}).then(callback);
+    // new Appointment(data).save(null, {method: 'update'}).then(callback);
+}
+
 module.exports.getAppointmentForSupporter = function(user,callback){
     new Appointment().where({supporter : user}).fetchAll().then(callback);
+}
+
+module.exports.getAppointmentForUser = function(user,callback){
+	new Appointment().where({username : user}).fetchAll().then(callback);
 }
 
 module.exports.removeAppointment = function(time,callback){
@@ -147,12 +195,22 @@ module.exports.removeAppointment = function(time,callback){
     new Appointment().where({Time : time.Time}).destroy().then(callback)
 }
 
-
-module.exports.getAllAppointment = function(user,callback){
-    new Appointment().fetchAll().then(callback);
+module.exports.getAllImageData = function(callback){
+    new Images().fetchAll().then(callback);
 }
 
 module.exports.getSteps = function(callback){
     new Steps().fetchAll().then(callback);
 
+}
+
+//adding notes
+module.exports.addNote = function(data, callback){
+    new Appointment().where({id: data.id}).save({description: data.description}, {patch: true}).then(callback);
+
+}
+
+// getting notes for user
+module.exports.getNotesforUser = function(username, callback){
+    new Notes().where({Username: username}).fetchAll().then(callback);
 }
